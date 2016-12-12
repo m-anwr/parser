@@ -4,12 +4,8 @@
  * and open the template in the editor.
  */
 package scanner;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.ListIterator;
 
 /**
@@ -28,7 +24,7 @@ public class Scanner {
 	WRITE,
 	PLUS,
 	MINUS,
-	MULIPLY,
+	MULTIPLY,
 	DIVIDE,
 	EQUAL_TO,
 	LESS_THAN,
@@ -46,7 +42,7 @@ public class Scanner {
         code = c;
     }
     
-    public ArrayList<Pair<String, TokenType>> scan() {
+    public void scan() {
         String token;
         
         for(String line : code.split("\n") ) {
@@ -117,7 +113,7 @@ public class Scanner {
                 } else if (stringChar.matches("-")) {
                     res.add(new Pair<>(stringChar, TokenType.MINUS));
                 } else if (stringChar.matches("\\*")) {
-                    res.add(new Pair<>(stringChar, TokenType.MULIPLY));
+                    res.add(new Pair<>(stringChar, TokenType.MULTIPLY));
                 } else if (stringChar.matches("/")) {
                     res.add(new Pair<>(stringChar, TokenType.DIVIDE));
                 } else if (stringChar.matches("=")) {
@@ -133,8 +129,6 @@ public class Scanner {
                 }
             }
         }
-        
-        return res;
     }
     
     private void eliminateComment(ListIterator<String> i) {
@@ -146,6 +140,10 @@ public class Scanner {
                 eliminateComment(i);
             }
         }
+    }
+    
+    public ArrayList<Pair<String, TokenType>> scanResult() {
+        return res;
     }
     
     private final ArrayList<Pair<String, TokenType>> res;

@@ -6,7 +6,6 @@
 package scanner;
 
 import java.awt.EventQueue;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -141,10 +140,13 @@ public class MainWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void scanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanBtnActionPerformed
-        Scanner s = new Scanner(code.getText());
+        s = new Scanner(code.getText());
+        
         DefaultTableModel tm = (DefaultTableModel) result.getModel();
         tm.setRowCount(0);
-        s.scan().forEach((p) -> {
+        
+        s.scan();
+        s.scanResult().forEach((p) -> {
             tm.addRow(new Object[]{p.getL(), p.getR().toString()});
         });
     }//GEN-LAST:event_scanBtnActionPerformed
@@ -202,6 +204,8 @@ public class MainWindow extends javax.swing.JFrame {
             new MainWindow().setVisible(true);
         });
     }
+    
+    private Scanner s;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea code;
     private javax.swing.JPanel jPanel2;
