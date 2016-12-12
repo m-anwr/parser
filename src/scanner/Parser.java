@@ -58,9 +58,7 @@ public class Parser {
        {
            match(Scanner.TokenType.SEMICOLON);
            p.addChild(statement(p));
-       
        }
-       
     }
     // statement ---> if_statement | repeat_stmt | assign_stmt | read_stmt | write_stmt
     public Node statement(Node p){
@@ -79,7 +77,6 @@ public class Parser {
         else{
             //error
         }
-    
     }
     // if_stmt --->         if exp then stmt_sequence [else stmt_sequence] end
     public Node if_stmt(Node p){
@@ -126,11 +123,104 @@ public class Parser {
         n.addChild(exp(n));
         return n;
     }
+    
     // exp --->             simple_exp [comparison_op simple_exp]
+    public Node exp(Node p){
+        Node n = new Node(p,"exp");
+        n.addChild(simple_exp(n));
+        if (scanOut.get(index).getR() == Scanner.TokenType.LESS_THAN ||scanOut.get(index).getR() == Scanner.TokenType.EQUAL_TO)
+        {
+            n.addChild(comparison_op(n));
+            n.addChild(simple_exp(n));
+        }        
+        return n;
+    }
     // comparison_op --->   < | =
+    public Node comparison_op(Node p){
+        if(scanOut.get(index).getR() == Scanner.TokenType.LESS_THAN){
+            match(Scanner.TokenType.LESS_THAN);
+            return new Node(p,"<");        
+        }
+        if(scanOut.get(index).getR() == Scanner.TokenType.EQUAL_TO){
+            match(Scanner.TokenType.EQUAL_TO);
+            return new Node(p,"=");        
+        }
+        else
+        {
+            //error
+            return p;
+        }
+    }
     // simple_exp --->      term {addop term}
+    public Node simple_exp(Node p){
+        Node n = new Node(p,"simple_exp");
+        n.addChild(term(n));
+       while(scanOut.get(index).getR() == Scanner.TokenType.PLUS ||scanOut.get(index).getR() == Scanner.TokenType.MINUS)
+       {
+           n.addChild(addop(n));
+           n.addChild(term(n));
+       }
+        return n;
+    }
     // addop --->           +|-
+    public Node addop(Node p){
+        if(scanOut.get(index).getR() == Scanner.TokenType.PLUS){
+            match(Scanner.TokenType.PLUS);
+            return new Node(p,"+");        
+        }
+        else if(scanOut.get(index).getR() == Scanner.TokenType.MINUS){
+            match(Scanner.TokenType.MINUS);
+            return new Node(p,"-");        
+        }
+        else
+        {
+            //error
+            return p;
+        }
+    }
     // term --->            factor {mulop factor}
+    public Node term(Node p){
+        Node n = new Node(p,"term");
+        n.addChild(factor(n));
+       while(scanOut.get(index).getR() == Scanner.TokenType.MULTIPLY||scanOut.get(index).getR() == Scanner.TokenType.DIVIDE)
+       {
+           n.addChild(mulop(n));
+           n.addChild(factor(n));
+       }
+        return n;
+    }
     // mulop --->           * | /
+    public Node mulop(Node p){
+        if(scanOut.get(index).getR() == Scanner.TokenType.MULTIPLY){
+            match(Scanner.TokenType.MULTIPLY);
+            return new Node(p,"*");        
+        }
+        else if(scanOut.get(index).getR() == Scanner.TokenType.DIVIDE){
+            match(Scanner.TokenType.DIVIDE);
+            return new Node(p,"/");        
+        }
+        else
+        {
+            //error
+            return p;
+        }
+    }
     // factor --->          (exp) | number | identifier
+    public Node factor(Node p){
+        Node n = new Node(p,"factor");
+        if(scanOut.get(index).getR() == Scanner.TokenType.LEFT_PAREN){
+            match(Scanner.TokenType.LEFT_PAREN);
+            n.addChild(exp(n));
+            match(Scanner.TokenType.RIGHT_PAREN);
+        }
+        else if(scanOut.get(index).getR() == Scanner.TokenType.NUMBER){
+            match(Scanner.TokenType.NUMBER);
+            n.addChild(new Node(p,"Number"));
+        }
+        else if(scanOut.get(index).getR() == Scanner.TokenType.IDENTIFIER){
+            match(Scanner.TokenType.IDENTIFIER);
+            n.addChild(new Node(p,"IDENTIFIER"));
+        }
+        return n;
+    }
 }
