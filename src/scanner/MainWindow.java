@@ -6,10 +6,11 @@
 package scanner;
 
 import java.awt.EventQueue;
-import java.io.BufferedReader;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
@@ -140,13 +141,20 @@ public class MainWindow extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void scanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanBtnActionPerformed
-        Scanner s = new Scanner(code.getText());
+    private void performScan() {
+        s = new Scanner(code.getText());
+        
         DefaultTableModel tm = (DefaultTableModel) result.getModel();
         tm.setRowCount(0);
-        s.scan().forEach((p) -> {
+        
+        s.scan();
+        s.scanResult().forEach((p) -> {
             tm.addRow(new Object[]{p.getL(), p.getR().toString()});
         });
+    }
+    
+    private void scanBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_scanBtnActionPerformed
+        performScan();
     }//GEN-LAST:event_scanBtnActionPerformed
 
     private void loadFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFileBtnActionPerformed
@@ -166,8 +174,16 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_loadFileBtnActionPerformed
 
     private void parseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parseBtnActionPerformed
-        Graph g = new Graph(this, true);
-        g.setVisible(true);
+        // Scan
+        performScan();
+        
+        // Parse
+        // p = new Parser(s.scanResult)
+        // ArrayList<Node> treesList = Parser.syntaxTree();
+        
+        // Draw
+        //Graph g = new Graph(treesList, this, true);
+        //g.setVisible(true);
     }//GEN-LAST:event_parseBtnActionPerformed
 
     /**
@@ -202,6 +218,9 @@ public class MainWindow extends javax.swing.JFrame {
             new MainWindow().setVisible(true);
         });
     }
+    
+    private Scanner s;
+    private Parser p;
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextArea code;
     private javax.swing.JPanel jPanel2;
