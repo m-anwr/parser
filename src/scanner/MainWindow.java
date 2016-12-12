@@ -5,6 +5,10 @@
  */
 package scanner;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -144,7 +148,19 @@ public class MainWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_scanBtnActionPerformed
 
     private void loadFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFileBtnActionPerformed
-        // TODO add your handling code here:
+        JFileChooser fc = new JFileChooser();
+        int result = fc.showDialog(this, "Open file");
+        
+        if (result == JFileChooser.APPROVE_OPTION)
+        {
+            File f = fc.getSelectedFile();
+            try
+            {
+                FileReader reader = new FileReader(f);
+                code.read( reader, null );
+            }
+            catch(Exception e2) { System.out.println(e2); }
+        }
     }//GEN-LAST:event_loadFileBtnActionPerformed
 
     private void parseBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_parseBtnActionPerformed
