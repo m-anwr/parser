@@ -5,9 +5,11 @@
  */
 package scanner;
 
+import java.awt.EventQueue;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
@@ -149,9 +151,9 @@ public class MainWindow extends javax.swing.JFrame {
 
     private void loadFileBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loadFileBtnActionPerformed
         JFileChooser fc = new JFileChooser();
-        int result = fc.showDialog(this, "Open file");
+        int res = fc.showDialog(this, "Open file");
         
-        if (result == JFileChooser.APPROVE_OPTION)
+        if (res == JFileChooser.APPROVE_OPTION)
         {
             File f = fc.getSelectedFile();
             try
@@ -159,7 +161,7 @@ public class MainWindow extends javax.swing.JFrame {
                 FileReader reader = new FileReader(f);
                 code.read( reader, null );
             }
-            catch(Exception e2) { System.out.println(e2); }
+            catch(IOException e) { System.out.println(e); }
         }
     }//GEN-LAST:event_loadFileBtnActionPerformed
 
@@ -196,10 +198,8 @@ public class MainWindow extends javax.swing.JFrame {
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new MainWindow().setVisible(true);
-            }
+        EventQueue.invokeLater(() -> {
+            new MainWindow().setVisible(true);
         });
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
