@@ -14,7 +14,7 @@ import java.util.ArrayList;
 public class Parser {
         
     private final ArrayList<Pair<String, Scanner.TokenType>> scanOut;
-    private final int index;
+    private int index;
     
     //the constructor takes an arraylist *SCANNER OUTPUT*
     //Index data member starting from 0
@@ -25,6 +25,16 @@ public class Parser {
         index = 0;
     }
     //match  forwards the index *after the check*
+    public void match(Scanner.TokenType t){
+        if(scanOut.get(index).getR() == t){
+            index +=1;
+        }
+    }
+    public void unmatch(Scanner.TokenType t){
+        if(scanOut.get(index).getR() == t){
+            index -=1;
+        }
+    }
     //unmatch  backwards the index to check another possibility
     // A method for each grammer rule after EBNF
     // RULES:
