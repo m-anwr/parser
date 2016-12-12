@@ -38,7 +38,7 @@ public class Parser {
     //unmatch  backwards the index to check another possibility
     
     public Node parse(){
-    
+        index = 0;
         Node n = new Node(null,"program");
         n.addChild(program(n));
         return n;
@@ -47,18 +47,19 @@ public class Parser {
     // RULES:
     // program --->         stmt_sequence
     public Node program(Node p){
-        Node n = new Node(p,"statemnt sequence");
-        stmt_sequence(n);
+        Node n = stmt_sequence(p);
         return n;
     }
     // stmt_sequence --->   statement {;statement}
-    public void stmt_sequence(Node p){
-       p.addChild(statement(p));
+    public Node stmt_sequence(Node p){
+        Node n = new Node(p, "stmt_sequence");
+        n.addChild(statement(n));
        while(scanOut.get(index).getR() == Scanner.TokenType.SEMICOLON)
        {
            match(Scanner.TokenType.SEMICOLON);
-           p.addChild(statement(p));
+           n.addChild(statement(n));
        }
+       return n;
     }
     // statement ---> if_statement | repeat_stmt | assign_stmt | read_stmt | write_stmt
     public Node statement(Node p){
@@ -77,6 +78,7 @@ public class Parser {
         else{
             //error
         }
+        return new Node(p, "mistake");
     }
     // if_stmt --->         if exp then stmt_sequence [else stmt_sequence] end
     public Node if_stmt(Node p){
@@ -84,11 +86,11 @@ public class Parser {
         match(Scanner.TokenType.IF);
         n.addChild(exp(n));
         match(Scanner.TokenType.THEN);
-        stmt_sequence(n);
+        n.addChild(stmt_sequence(n));
         if (scanOut.get(index).getR() == Scanner.TokenType.ELSE)
         {
             match(Scanner.TokenType.ELSE);
-            stmt_sequence(n);
+            n.addChild(stmt_sequence(n));
         }
         return n;
     }
@@ -96,7 +98,7 @@ public class Parser {
     public Node repeat_stmt(Node p){
         Node n = new Node(p, "Repeat");
         match(Scanner.TokenType.REPEAT);
-        stmt_sequence(n);
+        n.addChild(stmt_sequence(n));
         match(Scanner.TokenType.UNTIL);
         n.addChild(exp(n));
         return n;
