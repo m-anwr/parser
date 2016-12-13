@@ -5,6 +5,7 @@
  */
 package scanner;
 
+import java.awt.Color;
 import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
@@ -37,7 +38,20 @@ public class Graph extends JDialog {
         this.root = root;
         
         graph = new ListenableUndirectedGraph(DefaultEdge.class);
+        
+        
         m_jgAdapter = new JGraphModelAdapter(graph);
+        
+        System.out.println(m_jgAdapter.getDefaultVertexAttributes());
+        
+        AttributeMap defaultMap = m_jgAdapter.getDefaultVertexAttributes();
+        defaultMap.put("bounds", new Rectangle2D.Double(50,50,120,40));
+        m_jgAdapter.setDefaultEdgeAttributes(defaultMap);
+        
+        terminalAttrs = new AttributeMap();
+        terminalAttrs.putAll(defaultMap);
+        terminalAttrs.put("backgroundColor", new Color(23, 151, 103));
+        terminalAttrs.put("border", new RoundedBorder());
         
         constructTree(this.root);
         
@@ -55,6 +69,7 @@ public class Graph extends JDialog {
             
         
         JGraph graphicalGraph = new JGraph( m_jgAdapter );
+        
         
         jScrollPane1.getViewport().add(graphicalGraph);
         
@@ -122,9 +137,13 @@ public class Graph extends JDialog {
         return false;
     }
     
-    private void positionVertexAt( Object vertex, double x, double y ) {
+    private void positionVertexAt( Node vertex, double x, double y ) {
         DefaultGraphCell cell = m_jgAdapter.getVertexCell(vertex);
         AttributeMap attr = cell.getAttributes();
+        
+//        if (vertex.isTerminal())
+//            attr.putAll(terminalAttrs);
+        
         Rectangle2D bounds = GraphConstants.getBounds(attr);
 
         Rectangle2D newBounds = 
@@ -164,6 +183,7 @@ public class Graph extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private final AttributeMap terminalAttrs;
     private final ListenableUndirectedGraph graph;
     private final Node root;
     private final JGraphModelAdapter m_jgAdapter;

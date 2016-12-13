@@ -13,15 +13,34 @@ import java.util.ArrayList;
  */
 public class Node {
     public Node(Node parent, String text) {
+        this.value = "";
         this.parent = parent;
         this.childrenCount = 0;
         this.text = text;
         children = new ArrayList<>();
     }
     
+    public Node(Node parent, String text, boolean isTerminal) {
+        this.value = "";
+        this.parent = parent;
+        this.childrenCount = 0;
+        this.text = text;
+        children = new ArrayList<>();
+        this.isTerminal = isTerminal;
+    }
+    
+    public Node(Node parent, String text, String val, boolean isTerminal) {
+        this.value = val;
+        this.parent = parent;
+        this.childrenCount = 0;
+        this.text = text;
+        children = new ArrayList<>();
+        this.isTerminal = isTerminal;
+    }
+    
     @Override
     public String toString() {
-        return text;
+        return value.isEmpty() ? text: text + " (" + value + ")";
     }
     
     public void addChild(Node n) {
@@ -41,6 +60,12 @@ public class Node {
         return children;
     }
     
+    public boolean isTerminal() {
+        return isTerminal;
+    }
+    
+    private final String value;
+    private boolean isTerminal = false;
     private final Node parent;
     private final ArrayList<Node> children;
     private Integer childrenCount;
