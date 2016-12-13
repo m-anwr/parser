@@ -141,8 +141,8 @@ public class Graph extends JDialog {
         DefaultGraphCell cell = m_jgAdapter.getVertexCell(vertex);
         AttributeMap attr = cell.getAttributes();
         
-//        if (vertex.isTerminal())
-//            attr.putAll(terminalAttrs);
+        if (vertex.isTerminal())
+            attr.putAll(terminalAttrs);
         
         Rectangle2D bounds = GraphConstants.getBounds(attr);
 
