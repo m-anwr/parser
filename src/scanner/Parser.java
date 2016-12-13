@@ -161,7 +161,7 @@ public class Parser {
         }
         if(scanOut.get(index).getR() == Scanner.TokenType.EQUAL_TO) {
             match(Scanner.TokenType.EQUAL_TO);
-            return new Node(p,"comp- op",scanOut.get(index - 1).getL(), true);        
+            return new Node(p,"comp-op",scanOut.get(index - 1).getL(), true);        
         }
         else
         {

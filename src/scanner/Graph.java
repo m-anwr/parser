@@ -10,6 +10,7 @@ import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import javax.swing.JDialog;
+import javax.swing.border.EmptyBorder;
 
 import org.jgraph.JGraph;
 import org.jgraph.graph.AttributeMap;
@@ -42,16 +43,15 @@ public class Graph extends JDialog {
         
         m_jgAdapter = new JGraphModelAdapter(graph);
         
-        System.out.println(m_jgAdapter.getDefaultVertexAttributes());
-        
         AttributeMap defaultMap = m_jgAdapter.getDefaultVertexAttributes();
         defaultMap.put("bounds", new Rectangle2D.Double(50,50,120,40));
+        defaultMap.put("border", new EmptyBorder(0,0,0,0));
         m_jgAdapter.setDefaultEdgeAttributes(defaultMap);
         
         terminalAttrs = new AttributeMap();
         terminalAttrs.putAll(defaultMap);
         terminalAttrs.put("backgroundColor", new Color(23, 151, 103));
-        terminalAttrs.put("border", new RoundedBorder());
+        
         
         constructTree(this.root);
         
