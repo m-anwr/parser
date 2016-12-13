@@ -142,8 +142,7 @@ public class Parser {
     
     // exp --->             simple_exp [comparison_op simple_exp]
     public Node exp(Node p){
-        Node n = new Node(p,"exp");
-        n.addChild(simple_exp(n));
+        Node n = simple_exp(p);
         if ((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.LESS_THAN ||
             scanOut.get(index).getR() == Scanner.TokenType.EQUAL_TO))
         {
@@ -202,8 +201,7 @@ public class Parser {
     
     // term --->            factor {mulop factor}
     public Node term(Node p){
-        Node n = new Node(p,"term");
-        n.addChild(factor(n));
+        Node n = factor(p);
        
        while((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.MULTIPLY ||
              scanOut.get(index).getR() == Scanner.TokenType.DIVIDE))
@@ -233,23 +231,24 @@ public class Parser {
     
     // factor --->          (exp) | number | identifier
     public Node factor(Node p){
-        Node n = new Node(p,"factor");
+        Node n;
         if(scanOut.get(index).getR()==Scanner.TokenType.LEFT_PAREN) {
                 match(Scanner.TokenType.LEFT_PAREN);
-                n.addChild(exp(n));
+                n = exp(p);
                 match(Scanner.TokenType.RIGHT_PAREN);
+                return n;
         }
         else if(scanOut.get(index).getR()==Scanner.TokenType.NUMBER){
                 match(Scanner.TokenType.NUMBER);
-                n.addChild(new Node(n,"Number"));
+                n = new Node(p,"Number");
+                return n;
         }
         else if(scanOut.get(index).getR()==Scanner.TokenType.IDENTIFIER){
                 match(Scanner.TokenType.IDENTIFIER);
-                n.addChild(new Node(n,"IDENTIFIER"));
+                n = new Node(p,"IDENTIFIER");
+                return n;
+                
         }
-        //    default:
-        //        break;
-        
-        return n;
+        return p;
     }
 }
