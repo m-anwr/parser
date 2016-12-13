@@ -82,6 +82,9 @@ public class Parser {
         else if(scanOut.get(index).getR() == Scanner.TokenType.READ){
             return read_stmt(p);
         }
+        else if(scanOut.get(index).getR() == Scanner.TokenType.WRITE){
+            return write_stmt(p);
+        }
         else{
             //error
         }
