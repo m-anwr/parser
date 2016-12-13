@@ -113,13 +113,6 @@ public class Graph extends JDialog {
                 DefaultGraphCell cell2 = m_jgAdapter.getVertexCell(n2);
                 AttributeMap attr2 = cell2.getAttributes();
                 Rectangle2D bounds2 = GraphConstants.getBounds(attr2);
-                
-//                bounds2.setRect(
-//                    bounds2.getX(), 
-//                    bounds2.getY(), 
-//                    bounds2.getWidth() + 50, 
-//                    bounds2.getHeight()
-//                );
                         
                 if (bounds1.intersects(bounds2))
                     return true;
@@ -127,29 +120,6 @@ public class Graph extends JDialog {
         }
         
         return false;
-    }
-    
-    private void drawTree(Node n, double width, double x, double y) {
-        if (n == null)
-            return;
-        
-        graph.addVertex(n);
-        
-        if (n.parent() != null) 
-            graph.addEdge(n.parent(), n, new GraphEdge());
-        
-        positionVertexAt(n, ((width + x) + x) / 2, y);
-        
-        if (n.childrenCount() != 0) {
-            for (int i = 0; i < n.childrenCount(); i++) {
-                drawTree(
-                    n.children().get(i),
-                    width/n.childrenCount(),
-                    x + i * width/n.childrenCount(),
-                    y + LEVEL_MARGIN_DEPTH
-                );
-            }
-        }
     }
     
     private void positionVertexAt( Object vertex, double x, double y ) {
