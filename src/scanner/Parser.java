@@ -59,7 +59,7 @@ public class Parser {
         Node n = new Node(p, "stmt_sequence");
         n.addChild(statement(n));
         
-       while(scanOut.get(index).getR() == Scanner.TokenType.SEMICOLON)
+       while((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.SEMICOLON))
        {
            match(Scanner.TokenType.SEMICOLON);
            if(index >= scanOut.size()) break;
@@ -100,6 +100,7 @@ public class Parser {
             match(Scanner.TokenType.ELSE);
             n.addChild(stmt_sequence(n));
         }
+        match(Scanner.TokenType.END);
         return n;
     }
     
@@ -140,8 +141,8 @@ public class Parser {
     public Node exp(Node p){
         Node n = new Node(p,"exp");
         n.addChild(simple_exp(n));
-        if (scanOut.get(index).getR() == Scanner.TokenType.LESS_THAN ||
-            scanOut.get(index).getR() == Scanner.TokenType.EQUAL_TO)
+        if ((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.LESS_THAN ||
+            scanOut.get(index).getR() == Scanner.TokenType.EQUAL_TO))
         {
             n.addChild(comparison_op(n));
             n.addChild(simple_exp(n));
@@ -169,12 +170,14 @@ public class Parser {
     public Node simple_exp(Node p){
         Node n = new Node(p,"simple_exp");
         n.addChild(term(n));
-       while(scanOut.get(index).getR() == Scanner.TokenType.PLUS ||
-             scanOut.get(index).getR() == Scanner.TokenType.MINUS)
+        
+        while((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.PLUS ||
+             scanOut.get(index).getR() == Scanner.TokenType.MINUS))
        {
            n.addChild(addop(n));
            n.addChild(term(n));
        }
+        
         return n;
     }
     // addop --->           +|-
@@ -198,8 +201,9 @@ public class Parser {
     public Node term(Node p){
         Node n = new Node(p,"term");
         n.addChild(factor(n));
-       while(scanOut.get(index).getR() == Scanner.TokenType.MULTIPLY ||
-             scanOut.get(index).getR() == Scanner.TokenType.DIVIDE)
+       
+       while((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.MULTIPLY ||
+             scanOut.get(index).getR() == Scanner.TokenType.DIVIDE))
        {
            n.addChild(mulop(n));
            n.addChild(factor(n));
@@ -227,23 +231,22 @@ public class Parser {
     // factor --->          (exp) | number | identifier
     public Node factor(Node p){
         Node n = new Node(p,"factor");
-        if(null != scanOut.get(index).getR())switch (scanOut.get(index).getR()) {
-            case LEFT_PAREN:
+        if(scanOut.get(index).getR()==Scanner.TokenType.LEFT_PAREN) {
                 match(Scanner.TokenType.LEFT_PAREN);
                 n.addChild(exp(n));
                 match(Scanner.TokenType.RIGHT_PAREN);
-                break;
-            case NUMBER:
+        }
+        else if(scanOut.get(index).getR()==Scanner.TokenType.NUMBER){
                 match(Scanner.TokenType.NUMBER);
                 n.addChild(new Node(n,"Number"));
-                break;
-            case IDENTIFIER:
+        }
+        else if(scanOut.get(index).getR()==Scanner.TokenType.IDENTIFIER){
                 match(Scanner.TokenType.IDENTIFIER);
                 n.addChild(new Node(n,"IDENTIFIER"));
-                break;
-            default:
-                break;
         }
+        //    default:
+        //        break;
+        
         return n;
     }
 }
