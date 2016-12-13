@@ -7,7 +7,7 @@ package scanner;
 
 import java.awt.Frame;
 import java.awt.geom.Rectangle2D;
-import java.util.ArrayList;
+import java.util.Iterator;
 import javax.swing.JDialog;
 
 import org.jgraph.JGraph;
@@ -26,25 +26,107 @@ public class Graph extends JDialog {
 
     /**
      * Creates new form Graph
-     * @param trees
+     * @param root
      * @param parent
      * @param modal
      */
-    public Graph(ArrayList<Node> trees, Frame parent, boolean modal) {
+    public Graph(Node root, Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         
+        this.root = root;
+        
         graph = new ListenableUndirectedGraph(DefaultEdge.class);
         m_jgAdapter = new JGraphModelAdapter(graph);
-  
-        trees.forEach((n) -> {
-            drawTree(n, CANVAS_WIDTH, 0, reached_depth);
-        });
+        
+        constructTree(this.root);
+        
+        int i = 0;
+        while(collistionDetected()) {
+            positionVertices(
+                this.root, 
+                CANVAS_WIDTH+(i*300), 
+                0, 
+                STARTING_DEPTH
+            );
+            
+            i++;
+        }
+            
         
         JGraph graphicalGraph = new JGraph( m_jgAdapter );
-        // graph.setPreferredSize(new Dimension(800, 600));
-        graphicalGraph.setEnabled(false);
+        
         jScrollPane1.getViewport().add(graphicalGraph);
+        
+    }
+    
+    private void constructTree(Node n) {
+        if (n == null)
+            return;
+        
+        graph.addVertex(n);
+        
+        if (n.parent() != null) 
+            graph.addEdge(n.parent(), n, new GraphEdge());
+        
+        if (n.childrenCount() != 0) {
+            for (int i = 0; i < n.childrenCount(); i++) {
+                constructTree(n.children().get(i));
+            }
+        }
+    }
+    
+    private void positionVertices(Node n, double width, double x, double y) {
+        if (n == null)
+            return;
+        
+        positionVertexAt(n, ((width + x) + x) / 2, y);
+        
+        if (n.childrenCount() != 0) {
+            for (int i = 0; i < n.childrenCount(); i++) {
+                positionVertices(
+                    n.children().get(i),
+                    width/n.childrenCount(),
+                    x + i * width/n.childrenCount(),
+                    y + LEVEL_MARGIN_DEPTH
+                );
+            }
+        }
+    }
+    
+    private boolean collistionDetected() {
+        
+        for (Iterator it1 = graph.vertexSet().iterator(); it1.hasNext();) {
+            Node n1 = (Node) it1.next();
+            
+            Iterator it2;
+            for (it2 = graph.vertexSet().iterator(); it2.hasNext();) {
+                      
+                Node n2 = (Node) it2.next();
+                
+                if(n1 == n2) continue;
+
+                DefaultGraphCell cell1 = m_jgAdapter.getVertexCell(n1);
+                AttributeMap attr1 = cell1.getAttributes();
+                Rectangle2D bounds1 = GraphConstants.getBounds(attr1);
+
+                DefaultGraphCell cell2 = m_jgAdapter.getVertexCell(n2);
+                AttributeMap attr2 = cell2.getAttributes();
+                Rectangle2D bounds2 = GraphConstants.getBounds(attr2);
+                
+//                bounds2.setRect(
+//                    bounds2.getX(), 
+//                    bounds2.getY(), 
+//                    bounds2.getWidth() + 50, 
+//                    bounds2.getHeight()
+//                );
+                        
+                if (bounds1.intersects(bounds2))
+                    return true;
+            }
+        }
+        
+        return false;
     }
     
     private void drawTree(Node n, double width, double x, double y) {
@@ -54,7 +136,7 @@ public class Graph extends JDialog {
         graph.addVertex(n);
         
         if (n.parent() != null) 
-            graph.addEdge(n.parent(), n);
+            graph.addEdge(n.parent(), n, new GraphEdge());
         
         positionVertexAt(n, ((width + x) + x) / 2, y);
         
@@ -63,24 +145,11 @@ public class Graph extends JDialog {
                 drawTree(
                     n.children().get(i),
                     width/n.childrenCount(),
-                    i * width/n.childrenCount(),
+                    x + i * width/n.childrenCount(),
                     y + LEVEL_MARGIN_DEPTH
                 );
             }
-        } else { // might be the deepest node in the tree
-            double depth  = getVertexDepth(n);
-            if (depth + TREE_MARGIN_DEPTH > reached_depth)
-                reached_depth = depth + TREE_MARGIN_DEPTH;
         }
-        
-    }
-    
-    private double getVertexDepth(Object vertex) {
-        DefaultGraphCell cell = m_jgAdapter.getVertexCell(vertex);
-        AttributeMap attr = cell.getAttributes();
-        Rectangle2D bounds = GraphConstants.getBounds(attr);
-        
-        return bounds.getY();
     }
     
     private void positionVertexAt( Object vertex, double x, double y ) {
@@ -118,8 +187,6 @@ public class Graph extends JDialog {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setSize(new java.awt.Dimension(800, 600));
 
-        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        jScrollPane1.setHorizontalScrollBar(null);
         jScrollPane1.setMinimumSize(new java.awt.Dimension(1280, 720));
         jScrollPane1.setPreferredSize(new java.awt.Dimension(1280, 720));
         getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
@@ -127,12 +194,12 @@ public class Graph extends JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private ListenableUndirectedGraph graph;
-    private JGraphModelAdapter m_jgAdapter;
+    private final ListenableUndirectedGraph graph;
+    private final Node root;
+    private final JGraphModelAdapter m_jgAdapter;
     private final double CANVAS_WIDTH = 1280;
     private final double LEVEL_MARGIN_DEPTH = 80;
-    private final double TREE_MARGIN_DEPTH = 150;
-    private double reached_depth = 20; // initially 20px height margin
+    private final double STARTING_DEPTH = 20; // initially 20px height margin
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JScrollPane jScrollPane1;

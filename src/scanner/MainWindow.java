@@ -6,11 +6,9 @@
 package scanner;
 
 import java.awt.EventQueue;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import javax.swing.JFileChooser;
 import javax.swing.table.DefaultTableModel;
 
@@ -178,12 +176,12 @@ public class MainWindow extends javax.swing.JFrame {
         performScan();
         
         // Parse
-        // p = new Parser(s.scanResult)
-        // ArrayList<Node> treesList = Parser.syntaxTree();
+        p = new Parser(s.scanResult());
+        Node treeRoot = p.parse();
         
         // Draw
-        //Graph g = new Graph(treesList, this, true);
-        //g.setVisible(true);
+        Graph g = new Graph(treeRoot, this, true);
+        g.setVisible(true);
     }//GEN-LAST:event_parseBtnActionPerformed
 
     /**
