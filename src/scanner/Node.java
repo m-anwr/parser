@@ -64,9 +64,13 @@ public class Node {
         return isTerminal;
     }
     
+    public void setParent(Node n){
+        this.parent = n;
+    }
+    
     private final String value;
     private boolean isTerminal = false;
-    private final Node parent;
+    private Node parent;
     private final ArrayList<Node> children;
     private Integer childrenCount;
     private final String text;
