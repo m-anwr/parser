@@ -143,14 +143,30 @@ public class Parser {
     
     // exp --->             simple_exp [comparison_op simple_exp]
     public Node exp(Node p){
-        Node n = simple_exp(p);
+        Node n = new Node(p,"exp", false);
+        n.addChild(simple_exp(n));
         if ((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.LESS_THAN ||
             scanOut.get(index).getR() == Scanner.TokenType.EQUAL_TO))
         {
             n.addChild(comparison_op(n));
             n.addChild(simple_exp(n));
         }        
-        return n;
+        if (n.childrenCount() == 1){
+            Node s = new Node(p, n.children().get(0).toString(),n.children().get(0).isTerminal());
+            ArrayList<Node> l = n.children().get(0).children();
+            for(int i = 0; i < l.size(); i++){
+                s.addChild(new Node(s,l.get(i).toString(), l.get(i).isTerminal()));
+            }
+            return s;
+        }
+        else {
+            ArrayList<Node> l = n.children();
+            Node s = new Node(p,l.get(1).toString(), l.get(1).isTerminal());
+            s.addChild(new Node(s,l.get(0).toString(), l.get(0).isTerminal()));
+            s.addChild(new Node(s,l.get(2).toString(), l.get(2).isTerminal()));
+            return s;
+        }
+        
     }
     
     // comparison_op --->   < | =
@@ -180,8 +196,21 @@ public class Parser {
            n.addChild(addop(n));
            n.addChild(term(n));
        }
-        
-        return n;
+        if (n.childrenCount() == 1){
+            Node s = new Node(p, n.children().get(0).toString(),n.children().get(0).isTerminal());
+            ArrayList<Node> l = n.children().get(0).children();
+            for(int i = 0; i < l.size(); i++){
+                s.addChild(new Node(s,l.get(i).toString(), l.get(i).isTerminal()));
+            }
+            return s;
+        }
+        else {
+            ArrayList<Node> l = n.children();
+            Node s = new Node(p,l.get(1).toString(), l.get(1).isTerminal());
+            s.addChild(new Node(s,l.get(0).toString(), l.get(0).isTerminal()));
+            s.addChild(new Node(s,l.get(2).toString(), l.get(2).isTerminal()));
+            return s;
+        }
     }
     // addop --->           +|-
     public Node addop(Node p){
@@ -202,7 +231,8 @@ public class Parser {
     
     // term --->            factor {mulop factor}
     public Node term(Node p){
-        Node n = factor(p);
+        Node n = new Node(p,"term", false);
+        n.addChild(factor(n));
        
        while((index < scanOut.size()) &&(scanOut.get(index).getR() == Scanner.TokenType.MULTIPLY ||
              scanOut.get(index).getR() == Scanner.TokenType.DIVIDE))
@@ -210,7 +240,21 @@ public class Parser {
            n.addChild(mulop(n));
            n.addChild(factor(n));
        }
-        return n;
+        if (n.childrenCount() == 1){
+            Node s = new Node(p, n.children().get(0).toString(),n.children().get(0).isTerminal());
+            ArrayList<Node> l = n.children().get(0).children();
+            for(int i = 0; i < l.size(); i++){
+                s.addChild(new Node(s,l.get(i).toString(), l.get(i).isTerminal()));
+            }
+            return s;
+        }
+        else {
+            ArrayList<Node> l = n.children();
+            Node s = new Node(p,l.get(1).toString(), l.get(1).isTerminal());
+            s.addChild(new Node(s,l.get(0).toString(), l.get(0).isTerminal()));
+            s.addChild(new Node(s,l.get(2).toString(), l.get(2).isTerminal()));
+            return s;
+        }
     }
     
     // mulop --->           * | /
