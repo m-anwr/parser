@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package scanner;
+package Parser;
 
 import java.awt.EventQueue;
 import java.io.File;
@@ -44,7 +44,8 @@ public class MainWindow extends javax.swing.JFrame {
         parseBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("TINY Lang Scanner");
+        setTitle("TINY Lang Scanner/Parser");
+        setFocusable(false);
         setResizable(false);
         setSize(new java.awt.Dimension(800, 466));
         getContentPane().setLayout(new javax.swing.BoxLayout(getContentPane(), javax.swing.BoxLayout.LINE_AXIS));
